@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- 1. 启动层 -->
+    <!-- 启动层 -->
     <div id="start-overlay">
         <div class="start-content">
             <h1>🎄 Merry Christmas 🎄</h1>
@@ -18,14 +18,14 @@
         </div>
     </div>
 
-    <!-- 2. 提示条 (Toast) -->
+    <!-- 提示条 -->
     <div id="custom-toast">✨ 祝福已挂上树梢！</div>
 
-    <!-- 3. 主场景 -->
+    <!-- 主场景 -->
     <div class="main-container">
         
         <div class="tree-wrapper">
-            <!-- 树顶大星星 (独立于图片，悬浮在上方) -->
+            <!-- 树顶大星星 -->
             <div id="top-star-container">
                 <svg id="top-star-svg" viewBox="0 0 100 100">
                     <defs>
@@ -34,15 +34,14 @@
                             <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
                         </radialGradient>
                     </defs>
-                    <!-- 光晕 -->
                     <circle cx="50" cy="50" r="45" fill="url(#star-glow)" opacity="0.6" class="pulse-glow" />
-                    <!-- 星星主体 -->
                     <path fill="#FFD700" d="M50 5 L63 40 L98 40 L70 60 L80 95 L50 75 L20 95 L30 60 L2 40 L37 40 Z" />
                 </svg>
             </div>
 
-            <!-- 圣诞树图片 (请确保 assets 文件夹下有 tree.png) -->
-            <img src="assets/tree.png" id="tree-img" alt="Christmas Tree">
+            <!-- 圣诞树图片 -->
+         
+<img src="tree.png" id="tree-img" alt="圣诞树" onerror="this.style.border='2px solid red'; this.alt='图片未找到'">
 
             <!-- 挂饰层 -->
             <div id="ornaments-layer"></div>
@@ -57,12 +56,11 @@
         </div>
     </div>
 
-    <!-- 弹窗：查看祝福 (精美版) -->
+    <!-- 弹窗：查看祝福 (修改为浅蓝+白色主题) -->
     <div id="view-modal" class="modal">
         <div class="modal-content card-style">
             <span class="close-btn">&times;</span>
             <div class="card-header">
-                <!-- 头像/图标 -->
                 <div class="avatar-circle">
                     <i id="modal-icon" class="fas fa-gift"></i>
                 </div>
@@ -72,7 +70,7 @@
                 <p id="modal-text"></p>
             </div>
             <div class="card-footer">
-                <span class="decoration-line">❄️ Merry Christmas ❄️</span>
+                <span class="decoration-line">❄️ Winter Wishes ❄️</span>
             </div>
         </div>
     </div>
@@ -82,8 +80,8 @@
         <div class="modal-content input-style">
             <span class="close-btn">&times;</span>
             <h3>✨ 留下你的心愿 ✨</h3>
-            <input type="text" id="user-name" placeholder="署名 (例如: 快乐的小陈)" maxlength="10">
-            <textarea id="user-wish" placeholder="愿望 (例如: 2024万事胜意！)" maxlength="50"></textarea>
+            <input type="text" id="user-name" placeholder="你的名字" maxlength="10">
+            <textarea id="user-wish" placeholder="写下美好的愿望..." maxlength="50"></textarea>
             <button id="submit-wish">挂上树梢</button>
         </div>
     </div>
@@ -99,12 +97,10 @@
         </div>
     </div>
 
-    <!-- 背景音乐 (loop 属性确保循环) -->
     <audio id="bgm" loop>
-        <source src="assets/bg_music.mp3" type="audio/mpeg">
+        <source src="bg_music.mp3" type="audio/mpeg">
+
     </audio>
-    
-    <!-- 角色语音播放器 -->
     <audio id="char-voice"></audio>
 
     <script type="module" src="script.js"></script>
