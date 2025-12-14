@@ -9,19 +9,28 @@
 </head>
 <body>
 
-    <!-- 启动层 -->
+    <!-- 0. 新增：预加载层 (Loading) -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>正在装点圣诞树...</p>
+        </div>
+    </div>
+
+    <!-- 1. 启动层 -->
     <div id="start-overlay">
         <div class="start-content">
             <h1>🎄 Merry Christmas 🎄</h1>
             <p id="intro-text"></p>
-            <button id="start-btn">开启旅程</button>
+            <!-- 初始隐藏，等加载完才显示 -->
+            <button id="start-btn" style="display:none;">开启旅程</button>
         </div>
     </div>
 
-    <!-- 提示条 -->
+    <!-- 2. 提示条 -->
     <div id="custom-toast">✨ 祝福已挂上树梢！</div>
 
-    <!-- 主场景 -->
+    <!-- 3. 主场景 -->
     <div class="main-container">
         
         <div class="tree-wrapper">
@@ -40,8 +49,7 @@
             </div>
 
             <!-- 圣诞树图片 -->
-         
-<img src="tree.png" id="tree-img" alt="圣诞树" onerror="this.style.border='2px solid red'; this.alt='图片未找到'">
+            <img src="tree.png" id="tree-img" alt="Christmas Tree">
 
             <!-- 挂饰层 -->
             <div id="ornaments-layer"></div>
@@ -56,21 +64,19 @@
         </div>
     </div>
 
-    <!-- 弹窗：查看祝福 (修改为浅蓝+白色主题) -->
+    <!-- 弹窗：查看祝福 (新版：无头像，毛玻璃) -->
     <div id="view-modal" class="modal">
-        <div class="modal-content card-style">
+        <div class="modal-content glass-card">
             <span class="close-btn">&times;</span>
-            <div class="card-header">
-                <div class="avatar-circle">
-                    <i id="modal-icon" class="fas fa-gift"></i>
-                </div>
+            <div class="card-header-simple">
+                <!-- 只保留名字，去掉头像 -->
                 <h3 id="modal-author"></h3>
             </div>
             <div class="card-body">
                 <p id="modal-text"></p>
             </div>
-            <div class="card-footer">
-                <span class="decoration-line">❄️ Winter Wishes ❄️</span>
+            <div class="card-footer-simple">
+                <span>❄️ Merry Christmas ❄️</span>
             </div>
         </div>
     </div>
@@ -99,7 +105,6 @@
 
     <audio id="bgm" loop>
         <source src="bg_music.mp3" type="audio/mpeg">
-
     </audio>
     <audio id="char-voice"></audio>
 
