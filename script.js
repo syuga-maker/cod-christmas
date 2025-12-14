@@ -15,22 +15,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 角色配置
+// 角色数据 (去掉icon字段，因为前端不再显示)
 const characters = [
     { 
         id: 'santa', name: "圣诞老人", 
         text: "Ho Ho Ho... 孩子，愿你的冬天温暖如春，明年好运连连！", 
-        audio: "santa.mp3", icon: "fa-sleigh"
+        audio: "santa.mp3" 
     },
     { 
         id: 'deer', name: "鲁道夫", 
         text: "别怕黑夜，因为你的心里有光。我会为你照亮前行的路。", 
-        audio: "deer.mp3", icon: "fa-horse-head"
+        audio: "deer.mp3"
     },
     { 
         id: 'snowman', name: "雪人先生", 
         text: "慢慢来，美好的事情都在路上。给我一个大大的拥抱吧！", 
-        audio: "snow.mp3", icon: "fa-snowman"
+        audio: "snow.mp3"
     }
 ];
 
@@ -46,9 +46,23 @@ const MAX_USER_ORNAMENTS = 35;
 let allUserWishes = [];
 let occupiedPositions = [];
 
+// --- 0. 预加载逻辑 ---
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loading-screen');
+    const startBtn = document.getElementById('start-btn');
+    
+    // 隐藏Loading层
+    loader.style.opacity = '0';
+    setTimeout(() => {
+        loader.style.display = 'none';
+        // 显示开始按钮
+        startBtn.style.display = 'inline-block';
+        setTimeout(() => startBtn.style.opacity = '1', 100);
+    }, 500);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 生成雪花
     function createSnowflakes() {
         const snowCount = 60;
         for (let i = 0; i < snowCount; i++) {
@@ -64,14 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createSnowflakes();
 
-    // 打字机
     const introText = "在这个温暖的冬夜，愿所有美好如期而至...";
     const introElement = document.getElementById('intro-text');
     const startBtn = document.getElementById('start-btn');
     
-    typeWriter(introElement, introText, 200, () => {
-        startBtn.style.opacity = '1';
-    });
+    typeWriter(introElement, introText, 200, () => {});
 
     const overlay = document.getElementById('start-overlay');
     const bgm = document.getElementById('bgm');
@@ -87,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         listenToWishes();
     });
 
-    // 角色泡泡
     function initCharacterBubbles() {
         const container = document.getElementById('character-bubbles-layer');
         characters.forEach((char, index) => {
@@ -96,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bubble.innerText = char.name;
             
             const isLeft = index % 2 === 0;
-            const leftPos = isLeft ? (10 + Math.random() * 10) : (70 + Math.random() * 10);
+            const leftPos = isLeft ? (5 + Math.random() * 10) : (75 + Math.random() * 10);
             const topStep = 40 / characters.length; 
             const topPos = 30 + (index * topStep) + (Math.random() * 5);
 
@@ -111,23 +121,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 弹窗
     const viewModal = document.getElementById('view-modal');
     const modalText = document.getElementById('modal-text');
     const modalAuthor = document.getElementById('modal-author');
-    const modalIcon = document.getElementById('modal-icon');
     const charVoice = document.getElementById('char-voice');
     
     function showCharacterModal(char, bubbleElement) {
         modalAuthor.innerText = char.name;
-        modalIcon.className = `fas ${char.icon || 'fa-gift'}`;
         viewModal.style.display = 'flex';
         
         if(charVoice && char.audio) {
             charVoice.src = char.audio; 
             charVoice.play().catch(()=>{});
         }
-
         typeWriter(modalText, char.text, 100, () => {});
 
         const closeHandler = () => {
@@ -164,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ornament.addEventListener('click', (e) => {
             e.stopPropagation();
             modalAuthor.innerText = category === 'role' ? data.name : `👤 ${data.name}`;
-            modalIcon.className = category === 'role' ? `fas ${data.icon || 'fa-star'}` : 'fas fa-user-circle';
             modalText.innerText = data.text;
             viewModal.style.display = 'flex';
             
@@ -178,20 +183,34 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.appendChild(ornament);
     }
 
+    // --- 核心算法升级：避开树干 ---
     function getSafePosition(isRole, seed) {
-        let maxAttempts = 20; 
+        let maxAttempts = 30; 
         let safeDistance = 6; 
         
         for (let i = 0; i < maxAttempts; i++) {
             let currentSeed = seed + i * 100; 
             let r1 = seededRandom(currentSeed);
             let r2 = seededRandom(currentSeed + 1);
-            let y = r1 * 70 + 15; 
+            
+            // Y轴：15% ~ 88%
+            let y = r1 * 73 + 15; 
+            
+            // 角色星星尽量往上
             if(isRole) y = r1 * 30 + 15; 
-            let spread = (y - 5) * 0.7; 
+
+            // 计算三角形宽度
+            let spread = (y - 5) * 0.75; 
             if(spread > 90) spread = 90;
+
             let x = 50 + (r2 - 0.5) * spread;
 
+            // --- 避开树干逻辑 ---
+            // 假设树干在底部中央：Y > 80% 且 X 在 45%-55% 之间
+            let isTrunk = (y > 80 && x > 44 && x < 56);
+            if (isTrunk) continue; // 如果算在树干上，这次作废，重算
+
+            // 碰撞检测
             let collision = false;
             for (let p of occupiedPositions) {
                 let dist = Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2));
@@ -199,7 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!collision) return { x, y };
         }
-        let finalY = seededRandom(seed+9) * 60 + 20;
+        
+        // 兜底
+        let finalY = seededRandom(seed+9) * 50 + 20;
         return { x: 50, y: finalY };
     }
 
