@@ -18,19 +18,19 @@ const db = getDatabase(app);
 // 角色数据 (去掉icon字段，因为前端不再显示)
 const characters = [
     { 
-        id: 'santa', name: "圣诞老人", 
-        text: "Ho Ho Ho... 孩子，愿你的冬天温暖如春，明年好运连连！", 
-        audio: "santa.mp3" 
+        id: 'Ghost', name: "Ghost", 
+        text: "嘿，你来了，正等着你呢。圣诞快乐！", 
+        audio: "ghost.mp3"·
     },
     { 
-        id: 'deer', name: "鲁道夫", 
-        text: "别怕黑夜，因为你的心里有光。我会为你照亮前行的路。", 
-        audio: "deer.mp3"
+        id: 'keegan', name: "keegan", 
+        text"Kid，圣诞快乐，你今年表现很不错，猜猜你的圣诞礼物是什么？", 
+        audio: "keegan.mp3"
     },
     { 
-        id: 'snowman', name: "雪人先生", 
-        text: "慢慢来，美好的事情都在路上。给我一个大大的拥抱吧！", 
-        audio: "snow.mp3"
+        id: 'konig', name: "Konig", 
+        text: "圣诞快乐！哈哈，以防你不知道，树顶最高那颗大星星是我挂上去的！", 
+        audio: "konig.mp3"
     }
 ];
 
@@ -316,3 +316,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
