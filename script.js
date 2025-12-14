@@ -15,22 +15,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 角色数据 (去掉icon字段，因为前端不再显示)
+// ==========================================
+// 1. 角色数据更新 (Ghost, Keegan, Konig)
+// ==========================================
+// 请记得在文件夹里放入对应的 ghost.mp3, keegan.mp3, konig.mp3
 const characters = [
     { 
-        id: 'Ghost', name: "Ghost", 
-        text: "嘿，你来了，正等着你呢。圣诞快乐！", 
-        audio: "ghost.mp3"·
+        id: 'ghost', 
+        name: "Ghost", 
+        text: "Stay frosty. 愿你的圣诞行动像战术一样精准，平安喜乐。", 
+        audio: "ghost.mp3", 
+        icon: "fa-ghost" // 幽灵图标
     },
     { 
-        id: 'keegan', name: "keegan", 
-        text"Kid，圣诞快乐，你今年表现很不错，猜猜你的圣诞礼物是什么？", 
-        audio: "keegan.mp3"
+        id: 'keegan', 
+        name: "Keegan", 
+        text: "Target secured. 你的礼物已确认安全送达，节日快乐。", 
+        audio: "keegan.mp3",
+        icon: "fa-user-secret" // 特工图标
     },
     { 
-        id: 'konig', name: "Konig", 
-        text: "圣诞快乐！哈哈，以防你不知道，树顶最高那颗大星星是我挂上去的！", 
-        audio: "konig.mp3"
+        id: 'konig', 
+        name: "König", 
+        text: "Merry Christmas... 我...我为你准备了一个惊喜，希望你不介意。", 
+        audio: "konig.mp3",
+        icon: "fa-mask" // 面具图标
     }
 ];
 
@@ -46,23 +55,25 @@ const MAX_USER_ORNAMENTS = 35;
 let allUserWishes = [];
 let occupiedPositions = [];
 
-// --- 0. 预加载逻辑 ---
+// --- 预加载 ---
 window.addEventListener('load', () => {
     const loader = document.getElementById('loading-screen');
     const startBtn = document.getElementById('start-btn');
-    
-    // 隐藏Loading层
-    loader.style.opacity = '0';
-    setTimeout(() => {
-        loader.style.display = 'none';
-        // 显示开始按钮
-        startBtn.style.display = 'inline-block';
-        setTimeout(() => startBtn.style.opacity = '1', 100);
-    }, 500);
+    if(loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            if(startBtn) {
+                startBtn.style.display = 'inline-block';
+                setTimeout(() => startBtn.style.opacity = '1', 100);
+            }
+        }, 500);
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    // 雪花
     function createSnowflakes() {
         const snowCount = 60;
         for (let i = 0; i < snowCount; i++) {
@@ -78,26 +89,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createSnowflakes();
 
+    // 打字机
     const introText = "在这个温暖的冬夜，愿所有美好如期而至...";
     const introElement = document.getElementById('intro-text');
     const startBtn = document.getElementById('start-btn');
     
     typeWriter(introElement, introText, 200, () => {});
 
+    // 启动
     const overlay = document.getElementById('start-overlay');
     const bgm = document.getElementById('bgm');
 
-    startBtn.addEventListener('click', () => {
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.remove(), 800);
-        if(bgm) { 
-            bgm.volume = 0.3; 
-            bgm.play().catch((e) => console.log("需交互播放")); 
-        }
-        initCharacterBubbles();
-        listenToWishes();
-    });
+    if(startBtn) {
+        startBtn.addEventListener('click', () => {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 800);
+            if(bgm) { 
+                bgm.volume = 0.3; 
+                bgm.play().catch((e) => console.log("需交互播放")); 
+            }
+            initCharacterBubbles();
+            listenToWishes();
+        });
+    }
 
+    // 初始化泡泡
     function initCharacterBubbles() {
         const container = document.getElementById('character-bubbles-layer');
         characters.forEach((char, index) => {
@@ -108,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLeft = index % 2 === 0;
             const leftPos = isLeft ? (5 + Math.random() * 10) : (75 + Math.random() * 10);
             const topStep = 40 / characters.length; 
-            const topPos = 30 + (index * topStep) + (Math.random() * 5);
+            const topPos = 25 + (index * topStep) + (Math.random() * 5); // 泡泡位置也稍微调高了一点
 
             bubble.style.left = `${leftPos}%`;
             bubble.style.top = `${topPos}%`;
@@ -183,7 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.appendChild(ornament);
     }
 
-    // --- 核心算法升级：避开树干 ---
+    // ============================================
+    // 2. 核心算法修改：位置上移 (避开树干)
+    // ============================================
     function getSafePosition(isRole, seed) {
         let maxAttempts = 30; 
         let safeDistance = 6; 
@@ -193,22 +211,23 @@ document.addEventListener('DOMContentLoaded', () => {
             let r1 = seededRandom(currentSeed);
             let r2 = seededRandom(currentSeed + 1);
             
-            // Y轴：15% ~ 88%
-            let y = r1 * 73 + 15; 
+            // --- 调整高度范围 ---
+            // 之前的范围大约是 15% - 88%
+            // 现在上移 1/5，大约缩减底部的 20%
+            // 新范围：12% (顶部) - 68% (底部)
+            // 这样能确保星星都在树叶茂密的地方，完全避开树干
+            let y = r1 * 56 + 12; 
             
-            // 角色星星尽量往上
-            if(isRole) y = r1 * 30 + 15; 
+            // 角色大星星尽量在更显眼的中上部 (12% - 42%)
+            if(isRole) y = r1 * 30 + 12; 
 
-            // 计算三角形宽度
-            let spread = (y - 5) * 0.75; 
+            // --- 调整宽度 spread ---
+            // 因为位置整体上移了，树的宽度计算也要适配 (三角形变宽的速度)
+            // 系数调大一点点(0.8)，让星星能铺满树冠的左右边缘
+            let spread = (y - 5) * 0.8; 
             if(spread > 90) spread = 90;
 
             let x = 50 + (r2 - 0.5) * spread;
-
-            // --- 避开树干逻辑 ---
-            // 假设树干在底部中央：Y > 80% 且 X 在 45%-55% 之间
-            let isTrunk = (y > 80 && x > 44 && x < 56);
-            if (isTrunk) continue; // 如果算在树干上，这次作废，重算
 
             // 碰撞检测
             let collision = false;
@@ -219,16 +238,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!collision) return { x, y };
         }
         
-        // 兜底
-        let finalY = seededRandom(seed+9) * 50 + 20;
+        // 兜底位置也相应上移
+        let finalY = seededRandom(seed+9) * 40 + 20;
         return { x: 50, y: finalY };
     }
 
     function typeWriter(element, text, speed, callback) {
-        let i = 0; element.innerHTML = "";
+        let i = 0; 
+        if(element) element.innerHTML = "";
         function type() {
             if (i < text.length) {
-                element.innerHTML += text.charAt(i); i++;
+                if(element) element.innerHTML += text.charAt(i); 
+                i++;
                 setTimeout(type, speed);
             } else if (callback) callback();
         }
@@ -277,37 +298,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
     const submitBtn = document.getElementById('submit-wish');
     const writeModal = document.getElementById('write-modal');
-    submitBtn.onclick = () => {
-        const name = document.getElementById('user-name').value.trim();
-        const text = document.getElementById('user-wish').value.trim();
-        if(name && text) {
-            push(ref(db, 'wishes'), { name, text, timestamp: Date.now() })
-                .then(() => {
-                    showToast("✨ 祝福已挂上树梢！"); writeModal.style.display = 'none';
-                    document.getElementById('user-name').value = ''; document.getElementById('user-wish').value = '';
-                }).catch(err => showToast("失败: " + err.message));
-        } else showToast("请完整填写哦~");
-    };
-    function showToast(msg) {
-        const toast = document.getElementById('custom-toast'); toast.innerText = msg;
-        toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
+    if(submitBtn) {
+        submitBtn.onclick = () => {
+            const name = document.getElementById('user-name').value.trim();
+            const text = document.getElementById('user-wish').value.trim();
+            if(name && text) {
+                push(ref(db, 'wishes'), { name, text, timestamp: Date.now() })
+                    .then(() => {
+                        showToast("✨ 祝福已挂上树梢！"); writeModal.style.display = 'none';
+                        document.getElementById('user-name').value = ''; document.getElementById('user-wish').value = '';
+                    }).catch(err => showToast("失败: " + err.message));
+            } else showToast("请完整填写哦~");
+        };
     }
     
-    document.getElementById('add-wish-btn').onclick = () => writeModal.style.display = 'flex';
-    document.getElementById('top-star-container').addEventListener('click', () => {
-        const list = document.getElementById('wishes-list'); list.innerHTML = '';
-        characters.forEach(c => {
-            const li = document.createElement('li'); li.style.color = "#c0392b";
-            li.innerHTML = `<strong>🎅 ${c.name}</strong>: ${c.text}`; list.appendChild(li);
+    function showToast(msg) {
+        const toast = document.getElementById('custom-toast'); 
+        if(toast) {
+            toast.innerText = msg;
+            toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    }
+    
+    const addWishBtn = document.getElementById('add-wish-btn');
+    if(addWishBtn) addWishBtn.onclick = () => writeModal.style.display = 'flex';
+    
+    const topStar = document.getElementById('top-star-container');
+    if(topStar) {
+        topStar.addEventListener('click', () => {
+            const list = document.getElementById('wishes-list'); 
+            if(list) {
+                list.innerHTML = '';
+                characters.forEach(c => {
+                    const li = document.createElement('li'); li.style.color = "#c0392b";
+                    li.innerHTML = `<strong>🎅 ${c.name}</strong>: ${c.text}`; list.appendChild(li);
+                });
+                allUserWishes.forEach(u => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>👤 ${u.name}</strong>: ${u.text}`; list.appendChild(li);
+                });
+                document.getElementById('all-wishes-modal').style.display = 'flex';
+            }
         });
-        allUserWishes.forEach(u => {
-            const li = document.createElement('li');
-            li.innerHTML = `<strong>👤 ${u.name}</strong>: ${u.text}`; list.appendChild(li);
-        });
-        document.getElementById('all-wishes-modal').style.display = 'flex';
-    });
+    }
     
     document.querySelectorAll('.close-btn').forEach(btn => {
         btn.onclick = (e) => {
@@ -316,4 +352,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
