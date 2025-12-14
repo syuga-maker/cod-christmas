@@ -2,7 +2,9 @@
     --bg-color: #0f2027;
     --gold: #FFD700;
     --red: #c0392b;
-    --card-bg: rgba(255, 255, 255, 0.95);
+    /* 新的主题色：浅蓝 */
+    --theme-blue-light: #e1f5fe;
+    --theme-blue-dark: #0288d1;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,35 +43,35 @@ body {
     box-shadow: 0 0 20px rgba(192, 57, 43, 0.6); opacity: 0; transition: opacity 1s;
 }
 
-/* --- 树容器 (适配 PNG) --- */
+/* --- 树容器 (修复图片不显示问题) --- */
 .main-container {
     position: relative; width: 100%; height: 100%;
     display: flex; justify-content: center; align-items: flex-end;
-    padding-bottom: 120px; /* 留出底部空间 */
+    padding-bottom: 120px;
 }
 .tree-wrapper {
     position: relative;
-    /* 树的宽度，根据图片比例调整，这里设为屏幕宽度的 90%，最大 500px */
     width: 90vw; max-width: 500px;
-    height: auto;
+    /* 关键修复：高度自动，让图片撑开高度 */
+    height: auto; 
+    /* 最小高度，防止图片未加载时高度为0 */
+    min-height: 300px; 
     z-index: 10;
-    display: flex; justify-content: center; /* 确保图片居中 */
+    display: flex; justify-content: center;
 }
 
-/* PNG 树图片 */
 #tree-img {
     width: 100%;
-    height: auto;
+    height: auto; /* 保持比例 */
     object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); /* 给树加点阴影更立体 */
-    display: block;
+    display: block; /* 防止底部留白 */
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
 }
 
-/* 树顶星星 (绝对定位) */
+/* 树顶星星 */
 #top-star-container {
     position: absolute;
-    /* 根据你的图片，树尖大概在顶部。微调 top 让星星刚好坐在树尖上 */
-    top: -8%; 
+    top: -12%; /* 根据实际图片微调 */
     left: 50%;
     transform: translateX(-50%);
     width: 80px; height: 80px;
@@ -79,9 +81,33 @@ body {
 }
 #top-star-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px var(--gold)); }
 .pulse-glow { animation: pulse 2s infinite alternate; }
-
 @keyframes starFloat { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1) rotate(5deg); } }
 @keyframes pulse { from { opacity: 0.4; r: 40; } to { opacity: 0.7; r: 48; } }
+
+/* --- 泡泡 (改回圆形) --- */
+.char-bubble {
+    position: absolute; 
+    /* 强制正方形 */
+    width: 70px; height: 70px;
+    /* 圆形 */
+    border-radius: 50%;
+    
+    background: rgba(255, 255, 255, 0.2); 
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.5);
+    
+    /* 内容居中 */
+    display: flex; justify-content: center; align-items: center;
+    text-align: center;
+    
+    cursor: pointer; z-index: 50;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    color: white; font-weight: bold; font-size: 0.85rem;
+    animation: hoverAround 4s ease-in-out infinite;
+    transition: transform 0.2s, background 0.2s;
+}
+.char-bubble:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.35); }
+@keyframes hoverAround { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* --- 挂饰 --- */
 .ornament {
@@ -97,54 +123,67 @@ body {
 .flying-star { position: fixed; z-index: 999; font-size: 24px; color: var(--gold); text-shadow: 0 0 10px gold; pointer-events: none; transition: all 1s ease-in-out; }
 @keyframes sway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 
-/* --- 泡泡 --- */
-.char-bubble {
-    position: absolute; padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px);
-    border: 1px solid rgba(255,255,255,0.4); border-radius: 20px;
-    cursor: pointer; z-index: 50;
-    box-shadow: 0 0 15px rgba(255,255,255,0.1);
-    color: white; font-weight: bold; font-size: 0.9rem;
-    animation: hoverAround 4s ease-in-out infinite;
-    transition: transform 0.2s, background 0.2s;
-}
-.char-bubble:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.35); }
-@keyframes hoverAround { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-
 /* --- 弹窗通用 --- */
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
 .close-btn { 
     position: absolute; top: 10px; right: 10px; width: 30px; height: 30px;
     background: #f1f1f1; border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
-    font-size: 20px; cursor: pointer; color: #555; z-index: 10;
+    font-size: 20px; cursor: pointer; color: #555; z-index: 20;
 }
 
-/* --- 精美展示卡片 (Show Style) --- */
+/* --- 卡片样式 (修改为浅蓝+白色主题) --- */
 .card-style {
-    background: var(--card-bg);
+    background: #fff; /* 纯白背景 */
     width: 85%; max-width: 320px;
     border-radius: 20px;
     padding: 0; overflow: hidden;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
     text-align: center;
     position: relative;
-    border: 2px solid #d4af37; /* 金边 */
+    /* 浅蓝边框 */
+    border: 2px solid #b3e5fc;
 }
-.card-header {
-    background: linear-gradient(135deg, #c0392b, #8e44ad);
-    padding: 30px 20px 15px; color: white;
-}
-.avatar-circle {
-    width: 60px; height: 60px; background: white; border-radius: 50%;
-    margin: 0 auto 10px; display: flex; justify-content: center; align-items: center;
-    border: 3px solid var(--gold); color: #c0392b; font-size: 28px;
-}
-.card-header h3 { font-size: 1.4rem; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-.card-body { padding: 25px 20px; color: #333; font-size: 1.05rem; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center;}
-.card-footer { padding: 10px; background: #f9f9f9; border-top: 1px dashed #ddd; color: #888; font-size: 0.8rem; }
 
-/* --- 输入框样式 (Input Style) --- */
+.card-header {
+    /* 浅蓝渐变背景 */
+    background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+    padding: 30px 20px 15px; 
+    color: white;
+}
+
+.avatar-circle {
+    width: 60px; height: 60px; 
+    background: white; 
+    border-radius: 50%;
+    margin: 0 auto 10px; 
+    display: flex; justify-content: center; align-items: center;
+    /* 蓝色边框和图标 */
+    border: 3px solid #b3e5fc; 
+    color: #039be5; 
+    font-size: 28px;
+}
+
+.card-header h3 { font-size: 1.4rem; margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+.card-body { 
+    padding: 25px 20px; 
+    /* 深灰文字，确保在白底上清晰 */
+    color: #37474f; 
+    font-size: 1.05rem; 
+    line-height: 1.6; 
+    min-height: 100px; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+.card-footer { 
+    padding: 10px; 
+    background: #e1f5fe; /* 极淡的蓝色底部 */
+    color: #0277bd; 
+    font-size: 0.8rem; 
+}
+
+/* --- 输入框弹窗 --- */
 .input-style {
     background: #fff; width: 85%; max-width: 350px;
     padding: 30px 25px; border-radius: 20px;
@@ -165,16 +204,17 @@ textarea { resize: none; height: 80px; }
     color: white; font-weight: bold; cursor: pointer;
 }
 
-/* --- 列表样式 (List Style) --- */
+/* --- 列表弹窗 --- */
 .list-style {
     background: #fff; width: 85%; max-width: 350px; height: 70vh;
     padding: 40px 20px 20px; border-radius: 20px;
     display: flex; flex-direction: column; position: relative; color: #333;
+    overflow: hidden; /* 防止按钮卷动 */
 }
 .list-container { flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px; }
 #wishes-list li { padding: 10px 5px; border-bottom: 1px dashed #eee; font-size: 0.95rem; text-align: left; }
 
-/* --- 底部按钮 & Toast --- */
+/* --- 底部按钮 --- */
 .controls { position: absolute; bottom: 40px; width: 100%; text-align: center; z-index: 60; }
 #add-wish-btn { 
     padding: 14px 40px; border-radius: 50px; border: 2px solid var(--gold);
@@ -185,6 +225,7 @@ textarea { resize: none; height: 80px; }
 }
 #add-wish-btn:active { transform: scale(0.95); }
 
+/* --- Toast --- */
 #custom-toast {
     position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.95); color: var(--red); font-weight: bold;
