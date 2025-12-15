@@ -16,39 +16,82 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // ==========================================
-// 1. 角色数据更新 (Ghost, Keegan, Konig)
+// 1. 角色数据更新 
 // ==========================================
-// 请记得在文件夹里放入对应的 ghost.mp3, keegan.mp3, konig.mp3
 const characters = [
     { 
-        id: 'ghost', 
+        id: 'Ghost', 
         name: "Ghost", 
-        text: "Stay frosty. 愿你的圣诞行动像战术一样精准，平安喜乐。", 
-        audio: "ghost.mp3", 
-        icon: "fa-ghost" // 幽灵图标
+        fullName: "Simon \"Ghost\" Riley", 
+        text: "嘿，圣诞快乐！我们已经等了你有一会儿了，别傻站着，快来加入我们吧。", 
+        audio: "ghost.mp3"
     },
     { 
         id: 'keegan', 
         name: "Keegan", 
-        text: "Target secured. 你的礼物已确认安全送达，节日快乐。", 
-        audio: "keegan.mp3",
-        icon: "fa-user-secret" // 特工图标
+        fullName: "Keegan P. Russ",
+        text: "Kid，圣诞快乐！今年你的表现很优秀，希望明年我也能陪伴你的成长。", 
+        audio: "keegan.mp3"
+    },
+     { 
+        id: 'Nikto', 
+        name: "Nikto", 
+        fullName: "Nikto",
+        text: "嘿，小兔子，圣诞快乐。我们给你准备了一份圣诞礼物，猜猜是什么？", 
+        audio: "nikto.mp3"
+    },
+     { 
+        id: 'krueger', 
+        name: "Krueger", 
+        fullName: "Sebastian Josef Krueger",
+        text: "你跑到哪去了？我有一个很好的节日计划，今天让我们好好庆祝，ok？圣诞快乐。", 
+        audio: "krueger.mp3"
+    },
+     { 
+        id: 'Soap', 
+        name: "Soap", 
+        fullName: "John \"Soap\" MacTavish",
+        text: "圣诞快乐，我很开心你来参加今天的庆典。对了，你打算许什么愿望呢？", 
+        audio: "soap.mp3"
+    },
+     { 
+        id: 'Price', 
+        name: "Price", 
+        fullName: "Captain John Price",
+        text: "嘿，我们的优秀士兵来了，圣诞快乐!新的一年也请继续支持我们。", 
+        audio: "price.mp3"
+    },
+    { 
+        id: 'Riley', 
+        name: "Riley", 
+        fullName: "Riley",
+        text: "汪汪汪！汪汪汪汪汪！汪汪！！~", 
+        audio: "riley.mp3"
+    },
+     { 
+        id: 'Hesh', 
+        name: "Hesh", 
+        fullName: "David \"Hesh\" Walker",
+        text: "抓到你了！别太感动，这个位置是专门为你准备的!圣诞快乐!", 
+        audio: "Hesh.mp3"
     },
     { 
         id: 'konig', 
         name: "König", 
-        text: "Merry Christmas... 我...我为你准备了一个惊喜，希望你不介意。", 
-        audio: "konig.mp3",
-        icon: "fa-mask" // 面具图标
+        fullName: "König",
+        text: "哈哈，圣诞快乐。对了，以防你不知道，树顶最高那颗大星星是我挂上去的！", 
+        audio: "konig.mp3"
     }
 ];
 
+// 挂饰类型 (星星、雪花、球)
 const ornamentTypes = [
-    { icon: 'fa-star', color: '#FFD700' },
-    { icon: 'fa-star', color: '#E0E0E0' },
-    { icon: 'fa-heart', color: '#e91e63' },
-    { icon: 'fa-gift', color: '#ff6b6b' },
-    { icon: 'fa-bell', color: '#f39c12' }
+    { icon: 'fa-star', color: '#FFD700' }, // 金色星星
+    { icon: 'fa-star', color: '#ffffff' }, // 白色星星
+    { icon: 'fa-snowflake', color: '#ffffff' }, // 白色雪花
+    { icon: 'fa-circle', color: '#ffffff' }, // 白色球
+    { icon: 'fa-circle', color: '#FFD700' }, // 金色球
+    { icon: 'fa-circle', color: '#ffb7b2' }  // 浅粉色球
 ];
 
 const MAX_USER_ORNAMENTS = 35;
@@ -89,16 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createSnowflakes();
 
-    // 打字机
-    const introText = "在这个温暖的冬夜，愿所有美好如期而至...";
-    const introElement = document.getElementById('intro-text');
-    const startBtn = document.getElementById('start-btn');
     
-    typeWriter(introElement, introText, 200, () => {});
 
-    // 启动
     const overlay = document.getElementById('start-overlay');
     const bgm = document.getElementById('bgm');
+    const startBtn = document.getElementById('start-btn');
 
     if(startBtn) {
         startBtn.addEventListener('click', () => {
@@ -119,12 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
         characters.forEach((char, index) => {
             const bubble = document.createElement('div');
             bubble.className = 'char-bubble';
-            bubble.innerText = char.name;
+            bubble.innerText = char.name; // 泡泡里显示代号
             
             const isLeft = index % 2 === 0;
             const leftPos = isLeft ? (5 + Math.random() * 10) : (75 + Math.random() * 10);
             const topStep = 40 / characters.length; 
-            const topPos = 25 + (index * topStep) + (Math.random() * 5); // 泡泡位置也稍微调高了一点
+            const topPos = 25 + (index * topStep) + (Math.random() * 5); 
 
             bubble.style.left = `${leftPos}%`;
             bubble.style.top = `${topPos}%`;
@@ -143,14 +181,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const charVoice = document.getElementById('char-voice');
     
     function showCharacterModal(char, bubbleElement) {
-        modalAuthor.innerText = char.name;
+        // 弹窗显示全名
+        modalAuthor.innerText = char.fullName || char.name;
         viewModal.style.display = 'flex';
         
         if(charVoice && char.audio) {
             charVoice.src = char.audio; 
             charVoice.play().catch(()=>{});
         }
-        typeWriter(modalText, char.text, 100, () => {});
+        
+        // 打字机速度 (200ms)
+        typeWriter(modalText, char.text, 200, () => {});
 
         const closeHandler = () => {
             viewModal.style.display = 'none';
@@ -174,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const typeIndex = Math.floor(seededRandom(seed) * ornamentTypes.length);
             const type = ornamentTypes[typeIndex];
             ornament.className = `ornament user-item user-wrapper`;
+            // 应用图标和颜色
             iconHtml = `<i class="fas ${type.icon}" style="color:${type.color}"></i>`;
         }
         ornament.innerHTML = iconHtml;
@@ -185,7 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ornament.addEventListener('click', (e) => {
             e.stopPropagation();
-            modalAuthor.innerText = category === 'role' ? data.name : `👤 ${data.name}`;
+            // 这里用代号即可
+            modalAuthor.innerText = category === 'role' ? data.fullName : `✨ ${data.name}`;
             modalText.innerText = data.text;
             viewModal.style.display = 'flex';
             
@@ -199,9 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.appendChild(ornament);
     }
 
-    // ============================================
-    // 2. 核心算法修改：位置上移 (避开树干)
-    // ============================================
+    // 核心算法：位置上移 (避开树干)
     function getSafePosition(isRole, seed) {
         let maxAttempts = 30; 
         let safeDistance = 6; 
@@ -211,25 +252,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let r1 = seededRandom(currentSeed);
             let r2 = seededRandom(currentSeed + 1);
             
-            // --- 调整高度范围 ---
-            // 之前的范围大约是 15% - 88%
-            // 现在上移 1/5，大约缩减底部的 20%
-            // 新范围：12% (顶部) - 68% (底部)
-            // 这样能确保星星都在树叶茂密的地方，完全避开树干
             let y = r1 * 56 + 12; 
-            
-            // 角色大星星尽量在更显眼的中上部 (12% - 42%)
             if(isRole) y = r1 * 30 + 12; 
 
-            // --- 调整宽度 spread ---
-            // 因为位置整体上移了，树的宽度计算也要适配 (三角形变宽的速度)
-            // 系数调大一点点(0.8)，让星星能铺满树冠的左右边缘
             let spread = (y - 5) * 0.8; 
             if(spread > 90) spread = 90;
 
             let x = 50 + (r2 - 0.5) * spread;
 
-            // 碰撞检测
             let collision = false;
             for (let p of occupiedPositions) {
                 let dist = Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2));
@@ -238,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!collision) return { x, y };
         }
         
-        // 兜底位置也相应上移
         let finalY = seededRandom(seed+9) * 40 + 20;
         return { x: 50, y: finalY };
     }
@@ -308,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(name && text) {
                 push(ref(db, 'wishes'), { name, text, timestamp: Date.now() })
                     .then(() => {
-                        showToast("✨ 祝福已挂上树梢！"); writeModal.style.display = 'none';
+                        showToast("✨ 心愿已挂上树梢！"); writeModal.style.display = 'none';
                         document.getElementById('user-name').value = ''; document.getElementById('user-wish').value = '';
                     }).catch(err => showToast("失败: " + err.message));
             } else showToast("请完整填写哦~");
@@ -334,11 +363,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.innerHTML = '';
                 characters.forEach(c => {
                     const li = document.createElement('li'); li.style.color = "#c0392b";
-                    li.innerHTML = `<strong>🎅 ${c.name}</strong>: ${c.text}`; list.appendChild(li);
+                    
+                    li.innerHTML = `<strong>💝 ${c.name}</strong>: ${c.text}`; list.appendChild(li);
                 });
                 allUserWishes.forEach(u => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<strong>👤 ${u.name}</strong>: ${u.text}`; list.appendChild(li);
+                    li.innerHTML = `<strong>✨ ${u.name}</strong>: ${u.text}`; list.appendChild(li);
                 });
                 document.getElementById('all-wishes-modal').style.display = 'flex';
             }
