@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Merry Christmas</title>
+    <!-- 英文花体字 Great Vibes -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- 0. 新增：预加载层 (Loading) -->
+    <!-- 0. 预加载层 -->
     <div id="loading-screen">
         <div class="loader-content">
             <div class="spinner"></div>
-            <p>正在装点圣诞树...</p>
+            <p>正在装点圣诞树...<br><span style="font-size:0.8rem; opacity:0.7">（资源加载中，请稍候）</span></p>
         </div>
     </div>
 
@@ -21,14 +23,14 @@
     <div id="start-overlay">
         <div class="start-content">
             <h1>🎄 Merry Christmas 🎄</h1>
-            <p id="intro-text"></p>
-            <!-- 初始隐藏，等加载完才显示 -->
-            <button id="start-btn" style="display:none;">开启旅程</button>
+            <!-- 直接显示文字 -->
+            <p id="intro-text">我们准备了一颗超棒的圣诞树，要一起装饰吗？</p>
+            <button id="start-btn" style="display:none;">加入 CoD 圣诞企划</button>
         </div>
     </div>
 
     <!-- 2. 提示条 -->
-    <div id="custom-toast">✨ 祝福已挂上树梢！</div>
+    <div id="custom-toast">✨ 心愿已挂上树梢！</div>
 
     <!-- 3. 主场景 -->
     <div class="main-container">
@@ -60,17 +62,17 @@
 
         <!-- 底部按钮 -->
         <div class="controls">
-            <button id="add-wish-btn"><i class="fas fa-pen-fancy"></i> 写下祝福</button>
+            <button id="add-wish-btn"><i class="fas fa-pen-fancy"></i> 写下心愿</button>
         </div>
     </div>
 
-    <!-- 弹窗：查看祝福 (新版：无头像，毛玻璃) -->
+    <!-- 弹窗：查看角色祝福 -->
     <div id="view-modal" class="modal">
         <div class="modal-content glass-card">
             <span class="close-btn">&times;</span>
             <div class="card-header-simple">
-                <!-- 只保留名字，去掉头像 -->
-                <h3 id="modal-author"></h3>
+                <!-- 花体全名 -->
+                <h3 id="modal-author" class="fancy-name"></h3>
             </div>
             <div class="card-body">
                 <p id="modal-text"></p>
@@ -86,7 +88,7 @@
         <div class="modal-content input-style">
             <span class="close-btn">&times;</span>
             <h3>✨ 留下你的心愿 ✨</h3>
-            <input type="text" id="user-name" placeholder="你的名字" maxlength="10">
+            <input type="text" id="user-name" placeholder="你的名字/代号" maxlength="15">
             <textarea id="user-wish" placeholder="写下美好的愿望..." maxlength="50"></textarea>
             <button id="submit-wish">挂上树梢</button>
         </div>
@@ -96,9 +98,13 @@
     <div id="all-wishes-modal" class="modal">
         <div class="modal-content list-style">
             <span class="close-btn">&times;</span>
-            <h3>✨ 星空祝福墙 ✨</h3>
+            <h3>✨ 圣诞许愿树 ✨</h3>
             <div class="list-container">
                 <ul id="wishes-list"></ul>
+                <!-- 作者署名 -->
+                <div class="list-footer">
+                    制作 by syuga
+                </div>
             </div>
         </div>
     </div>
