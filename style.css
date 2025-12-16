@@ -171,12 +171,15 @@ body {
 
 /* 修改点3：花体字样式 */
 .fancy-name {
-    font-family: 'Great Vibes', cursive;
+    /* 优先英文花体，其次中文书法体，最后通用手写体 */
+    font-family: 'Great Vibes', 'Ma Shan Zheng', cursive;
     font-size: 2.2rem; 
     margin: 0;
     color: #01579b;
     text-shadow: 0 2px 4px rgba(255,255,255,0.8);
     font-weight: normal;
+    /* 防止中文如果太长导致换行太挤，稍微增加一点行高 */
+    line-height: 1.2; 
 }
 
 .card-body { 
