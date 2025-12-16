@@ -15,83 +15,95 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// 全局变量：用于控制打字机，防止冲突加速
+let currentTypewriterTimer = null;
+
 // ==========================================
-// 1. 角色数据更新 
+// 1. 角色数据
 // ==========================================
 const characters = [
     { 
         id: 'Ghost', 
         name: "Ghost", 
-        fullName: "Simon \"Ghost\" Riley", 
+        fullName: "Simon \"Ghost\" Riley",
         text: "嘿，圣诞快乐！我们已经等了你有一会儿了，别傻站着，快来加入我们吧。", 
-        audio: "ghost.mp3"
+        audio: "ghost.mp3", 
+        icon: "fa-ghost" 
     },
     { 
         id: 'keegan', 
         name: "Keegan", 
         fullName: "Keegan P. Russ",
         text: "Kid，圣诞快乐！今年你的表现很优秀，希望明年我也能陪伴你的成长。", 
-        audio: "keegan.mp3"
+        audio: "keegan.mp3",
+        icon: "fa-user-secret" 
     },
      { 
         id: 'Nikto', 
         name: "Nikto", 
         fullName: "Nikto",
         text: "嘿，小兔子，圣诞快乐。我们给你准备了一份圣诞礼物，猜猜是什么？", 
-        audio: "nikto.mp3"
+        audio: "nikto.mp3",
+        icon: "fa-user-secret" 
     },
      { 
         id: 'krueger', 
         name: "Krueger", 
         fullName: "Sebastian Josef Krueger",
         text: "你跑到哪去了？我有一个很好的节日计划，今天让我们好好庆祝，ok？圣诞快乐。", 
-        audio: "krueger.mp3"
+        audio: "krueger.mp3",
+        icon: "fa-user-secret" 
     },
      { 
         id: 'Soap', 
         name: "Soap", 
         fullName: "John \"Soap\" MacTavish",
         text: "圣诞快乐，我很开心你来参加今天的庆典。对了，你打算许什么愿望呢？", 
-        audio: "soap.mp3"
+        audio: "soap.mp3",
+        icon: "fa-user-secret" 
     },
      { 
         id: 'Price', 
         name: "Price", 
         fullName: "Captain John Price",
         text: "嘿，我们的优秀士兵来了，圣诞快乐!新的一年也请继续支持我们。", 
-        audio: "price.mp3"
+        audio: "price.mp3",
+        icon: "fa-user-secret" 
     },
     { 
         id: 'Riley', 
         name: "Riley", 
         fullName: "Riley",
         text: "汪汪汪！汪汪汪汪汪！汪汪！！~", 
-        audio: "riley.mp3"
+        audio: "riley.mp3",
+        icon: "fa-user-secret" 
     },
      { 
         id: 'Hesh', 
         name: "Hesh", 
         fullName: "David \"Hesh\" Walker",
         text: "抓到你了！别太感动，这个位置是专门为你准备的!圣诞快乐!", 
-        audio: "Hesh.mp3"
+        audio: "Hesh.mp3",
+        icon: "fa-user-secret" 
     },
     { 
         id: 'konig', 
         name: "König", 
         fullName: "König",
         text: "哈哈，圣诞快乐。对了，以防你不知道，树顶最高那颗大星星是我挂上去的！", 
-        audio: "konig.mp3"
+        audio: "konig.mp3",
+        icon: "fa-mask" 
     }
 ];
 
-// 挂饰类型 (星星、雪花、球)
+// 挂饰类型
 const ornamentTypes = [
-    { icon: 'fa-star', color: '#FFD700' }, // 金色星星
-    { icon: 'fa-star', color: '#ffffff' }, // 白色星星
-    { icon: 'fa-snowflake', color: '#ffffff' }, // 白色雪花
-    { icon: 'fa-circle', color: '#ffffff' }, // 白色球
-    { icon: 'fa-circle', color: '#FFD700' }, // 金色球
-    { icon: 'fa-circle', color: '#ffb7b2' }  // 浅粉色球
+    { icon: 'fa-star', color: '#FFD700' }, // 金星
+    { icon: 'fa-star', color: '#ffffff' }, // 白星
+    { icon: 'fa-snowflake', color: '#ffffff' }, // 白雪花
+    { icon: 'fa-circle', color: '#ffffff' }, // 白球
+    { icon: 'fa-circle', color: '#FFD700' }, // 金球
+    { icon: 'fa-circle', color: '#ffb7b2' }  // 粉球
 ];
 
 const MAX_USER_ORNAMENTS = 35;
@@ -132,8 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createSnowflakes();
 
-    
-
+    // 启动逻辑
     const overlay = document.getElementById('start-overlay');
     const bgm = document.getElementById('bgm');
     const startBtn = document.getElementById('start-btn');
@@ -157,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         characters.forEach((char, index) => {
             const bubble = document.createElement('div');
             bubble.className = 'char-bubble';
-            bubble.innerText = char.name; // 泡泡里显示代号
+            bubble.innerText = char.name; 
             
             const isLeft = index % 2 === 0;
             const leftPos = isLeft ? (5 + Math.random() * 10) : (75 + Math.random() * 10);
@@ -181,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const charVoice = document.getElementById('char-voice');
     
     function showCharacterModal(char, bubbleElement) {
-        // 弹窗显示全名
         modalAuthor.innerText = char.fullName || char.name;
         viewModal.style.display = 'flex';
         
@@ -190,12 +200,16 @@ document.addEventListener('DOMContentLoaded', () => {
             charVoice.play().catch(()=>{});
         }
         
-        // 打字机速度 (200ms)
+        // 调用打字机 (200ms)
         typeWriter(modalText, char.text, 200, () => {});
 
         const closeHandler = () => {
             viewModal.style.display = 'none';
             if(charVoice) charVoice.pause();
+            
+            // 关键修复3：关闭弹窗时，必须清除正在进行的打字机
+            if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
+            
             flyStarToTree(bubbleElement, char);
             viewModal.querySelector('.close-btn').removeEventListener('click', closeHandler);
         };
@@ -215,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const typeIndex = Math.floor(seededRandom(seed) * ornamentTypes.length);
             const type = ornamentTypes[typeIndex];
             ornament.className = `ornament user-item user-wrapper`;
-            // 应用图标和颜色
             iconHtml = `<i class="fas ${type.icon}" style="color:${type.color}"></i>`;
         }
         ornament.innerHTML = iconHtml;
@@ -227,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ornament.addEventListener('click', (e) => {
             e.stopPropagation();
-            // 这里用代号即可
             modalAuthor.innerText = category === 'role' ? data.fullName : `✨ ${data.name}`;
             modalText.innerText = data.text;
             viewModal.style.display = 'flex';
@@ -242,9 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.appendChild(ornament);
     }
 
-    // 核心算法：位置上移 (避开树干)
+    // ============================================
+    // 关键修复2：位置算法大升级 (加宽 + 随机)
+    // ============================================
     function getSafePosition(isRole, seed) {
-        let maxAttempts = 30; 
+        let maxAttempts = 50; 
         let safeDistance = 6; 
         
         for (let i = 0; i < maxAttempts; i++) {
@@ -252,14 +266,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let r1 = seededRandom(currentSeed);
             let r2 = seededRandom(currentSeed + 1);
             
+            // Y轴范围：12% (顶) - 68% (底)
             let y = r1 * 56 + 12; 
-            if(isRole) y = r1 * 30 + 12; 
+            
+            // 修复点1：角色大星星不再死板地聚在最顶端
+            // 允许它们分布在 12% - 55% 的中上区域，增加随机性
+            if(isRole) y = r1 * 43 + 12; 
 
-            let spread = (y - 5) * 0.8; 
-            if(spread > 90) spread = 90;
+            // 修复点2：大幅增加宽度 (User asked for +1/3 width)
+            // 原系数是 0.8，现在增加到 1.4，让三角形更“胖”
+            // 这样星星就能挂到左右更远的树梢上
+            let spread = (y - 5) * 1.4; 
+            
+            // 限制最大宽度，别飞出屏幕 (保持在 95% 容器宽度内)
+            if(spread > 95) spread = 95;
 
+            // 计算 X 轴
             let x = 50 + (r2 - 0.5) * spread;
 
+            // 碰撞检测
             let collision = false;
             for (let p of occupiedPositions) {
                 let dist = Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2));
@@ -268,19 +293,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!collision) return { x, y };
         }
         
+        // 兜底
         let finalY = seededRandom(seed+9) * 40 + 20;
         return { x: 50, y: finalY };
     }
 
+    // ============================================
+    // 关键修复3：稳健的打字机函数
+    // ============================================
     function typeWriter(element, text, speed, callback) {
+        // 1. 开始前，先强制清除上一次的计时器
+        if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
+        
         let i = 0; 
         if(element) element.innerHTML = "";
+        
         function type() {
             if (i < text.length) {
                 if(element) element.innerHTML += text.charAt(i); 
                 i++;
-                setTimeout(type, speed);
-            } else if (callback) callback();
+                // 2. 将新的计时器ID赋值给全局变量
+                currentTypewriterTimer = setTimeout(type, speed);
+            } else if (callback) {
+                // 结束时清除变量
+                currentTypewriterTimer = null;
+                callback();
+            }
         }
         type();
     }
@@ -363,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.innerHTML = '';
                 characters.forEach(c => {
                     const li = document.createElement('li'); li.style.color = "#c0392b";
-                    
                     li.innerHTML = `<strong>💝 ${c.name}</strong>: ${c.text}`; list.appendChild(li);
                 });
                 allUserWishes.forEach(u => {
@@ -379,6 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = (e) => {
            e.target.closest('.modal').style.display = 'none';
            if(charVoice) charVoice.pause();
+           // 关闭普通弹窗也清理打字机（预防万一）
+           if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
         }
     });
 });
