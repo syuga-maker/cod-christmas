@@ -30,12 +30,14 @@ body {
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- 雪花 --- */
+/* --- 雪花 (性能优化版) --- */
 .snowflake {
     position: fixed; top: -10px; background: white; border-radius: 50%;
     opacity: 0.8; pointer-events: none; z-index: 1;
     box-shadow: 0 0 5px rgba(255,255,255,0.8);
     animation: fall linear infinite;
+    /* 性能优化：告诉浏览器这个元素会动 */
+    will-change: transform; 
 }
 @keyframes fall { to { transform: translateY(110vh); } }
 
@@ -73,25 +75,19 @@ body {
     display: block; filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
 }
 
-/* --- 树顶星星 --- */
+/* --- 树顶星星 (PC端适配) --- */
 #top-star-container {
     position: absolute;
     left: 50%; transform: translateX(-50%);
     width: 80px; height: 80px;
     z-index: 20; cursor: pointer;
     animation: starFloat 3s ease-in-out infinite;
-    
-    /* 默认手机端位置 */
-    top: -10%;
+    top: -10%; /* 手机端默认位置 */
 }
 
-/* PC/平板端修复大星星悬空问题 */
-/* 通过媒体查询，当屏幕较宽时，把 top 值往下压 */
+/* 平板/PC 端微调位置 */
 @media (min-width: 768px) {
-    #top-star-container {
-        /* 原来可能有距离，现在改为 -4% 甚至更低，让它贴住树尖 */
-        top: -4%; 
-    }
+    #top-star-container { top: -4%; }
 }
 
 #top-star-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 10px var(--gold)); }
@@ -119,27 +115,23 @@ body {
 .char-bubble:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.35); }
 @keyframes hoverAround { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* --- 挂饰 (增加闪烁效果) --- */
+/* --- 挂饰 --- */
 .ornament {
     position: absolute; cursor: pointer; z-index: 15;
     display: flex; justify-content: center; align-items: center;
     transition: transform 0.3s;
     animation: sway 3s ease-in-out infinite alternate;
+    will-change: transform; /* 性能优化 */
 }
 .ornament:hover { transform: scale(1.4) !important; z-index: 100; }
 .ornament i { 
-    /* 增加投影让它更亮 */
     filter: drop-shadow(0 0 3px rgba(255,255,255,0.8)); 
-    /* 闪烁动画 */
     animation: twinkle 2s infinite alternate;
 }
-
-/* 闪烁动画帧 */
 @keyframes twinkle {
     from { opacity: 0.7; filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
     to { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,255,255,1)); }
 }
-
 .ornament.role-star i { font-size: 32px; color: var(--gold); text-shadow: 0 0 10px var(--gold); }
 .ornament.user-item i { font-size: 18px; }
 .flying-star { position: fixed; z-index: 999; font-size: 24px; color: var(--gold); text-shadow: 0 0 10px gold; pointer-events: none; transition: all 1s ease-in-out; }
@@ -156,7 +148,7 @@ body {
 }
 .close-btn:hover { background: rgba(255,255,255,0.6); color: #d32f2f; }
 
-/* --- 渐变浅蓝毛玻璃卡片 (修改点5：浅蓝优化) --- */
+/* --- 渐变浅蓝毛玻璃卡片 --- */
 .glass-card {
     background: linear-gradient(135deg, rgba(225, 245, 254, 0.9) 0%, rgba(179, 229, 252, 0.85) 100%);
     width: 85%; max-width: 320px;
@@ -169,17 +161,15 @@ body {
 
 .card-header-simple { padding: 30px 20px 10px; }
 
-/* 修改点3：花体字样式 */
+/* 优化：只对英文花体生效，中文回退到默认字体 */
 .fancy-name {
-    /* 优先英文花体，其次中文书法体，最后通用手写体 */
-    font-family: 'Great Vibes', 'Ma Shan Zheng', cursive;
+    font-family: 'Great Vibes', cursive;
     font-size: 2.2rem; 
     margin: 0;
     color: #01579b;
     text-shadow: 0 2px 4px rgba(255,255,255,0.8);
     font-weight: normal;
-    /* 防止中文如果太长导致换行太挤，稍微增加一点行高 */
-    line-height: 1.2; 
+    line-height: 1.2;
 }
 
 .card-body { 
@@ -229,17 +219,10 @@ textarea { resize: none; height: 80px; }
 }
 #wishes-list { flex: 1; list-style: none; }
 #wishes-list li { padding: 10px 5px; border-bottom: 1px dashed #eee; font-size: 0.95rem; text-align: left; }
-
-/* 作者署名样式 */
 .list-footer {
-    text-align: center;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    font-size: 0.8rem;
-    color: #999;
-    font-style: italic;
-    border-top: 1px solid #f0f0f0;
-    margin-top: 10px;
+    text-align: center; padding-top: 20px; padding-bottom: 10px;
+    font-size: 0.8rem; color: #999; font-style: italic;
+    border-top: 1px solid #f0f0f0; margin-top: 10px;
 }
 
 /* --- 底部按钮 --- */
@@ -262,3 +245,30 @@ textarea { resize: none; height: 80px; }
     z-index: 2100; opacity: 0; visibility: hidden; transition: all 0.5s ease;
 }
 #custom-toast.show { opacity: 1; visibility: visible; top: 15%; }
+
+/* ========================================================= */
+/* ⚡️ 手机端性能优化 ⚡️ (屏幕 < 768px) */
+/* ========================================================= */
+@media (max-width: 768px) {
+    /* 1. 禁用卡顿的毛玻璃 */
+    .glass-card, .char-bubble, .modal {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    /* 2. 增加背景透明度弥补视觉 */
+    .glass-card {
+        background: linear-gradient(135deg, rgba(225, 245, 254, 0.98) 0%, rgba(179, 229, 252, 0.95) 100%);
+    }
+    .char-bubble {
+        background: rgba(255, 255, 255, 0.5); /* 更不透明一点 */
+    }
+
+    /* 3. 简化光影效果 */
+    .ornament i {
+        filter: none !important;
+    }
+    #tree-img {
+        filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+    }
+}
