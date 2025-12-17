@@ -15,88 +15,75 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 全局变量：用于控制打字机，防止冲突加速
 let currentTypewriterTimer = null;
 
-// ==========================================
-// 1. 角色数据
-// ==========================================
 const characters = [
     { 
         id: 'Ghost', 
         name: "Ghost", 
         fullName: "Simon \"Ghost\" Riley",
         text: "嘿，圣诞快乐！我们已经等了你有一会儿了，别傻站着，快来加入我们吧。", 
-        audio: "ghost.mp3", 
-        icon: "fa-ghost" 
+        audio: "ghost.mp3"
     },
     { 
         id: 'keegan', 
         name: "Keegan", 
         fullName: "Keegan P. Russ",
         text: "Kid，圣诞快乐！今年你的表现很优秀，希望明年我也能陪伴你的成长。", 
-        audio: "keegan.mp3",
-        icon: "fa-user-secret" 
+        audio: "keegan.mp3"
     },
      { 
         id: 'Nikto', 
         name: "Nikto", 
         fullName: "Nikto",
         text: "嘿，小兔子，圣诞快乐。我们给你准备了一份圣诞礼物，猜猜是什么？", 
-        audio: "nikto.mp3",
-        icon: "fa-user-secret" 
+        audio: "nikto.mp3"
     },
      { 
         id: 'krueger', 
         name: "Krueger", 
         fullName: "Sebastian Josef Krueger",
         text: "你跑到哪去了？我有一个很好的节日计划，今天让我们好好庆祝，ok？圣诞快乐。", 
-        audio: "krueger.mp3",
-        icon: "fa-user-secret" 
+        audio: "krueger.mp3"
     },
      { 
         id: 'Soap', 
         name: "Soap", 
         fullName: "John \"Soap\" MacTavish",
         text: "圣诞快乐，我很开心你来参加今天的庆典。对了，你打算许什么愿望呢？", 
-        audio: "soap.mp3",
-        icon: "fa-user-secret" 
+        audio: "soap.mp3"
     },
      { 
         id: 'Price', 
         name: "Price", 
         fullName: "Captain John Price",
         text: "嘿，我们的优秀士兵来了，圣诞快乐!新的一年也请继续支持我们。", 
-        audio: "price.mp3",
-        icon: "fa-user-secret" 
+        audio: "price.mp3"
     },
     { 
         id: 'Riley', 
         name: "Riley", 
         fullName: "Riley",
         text: "汪汪汪！汪汪汪汪汪！汪汪！！~", 
-        audio: "riley.mp3",
-        icon: "fa-user-secret" 
+        audio: "riley.mp3"
     },
      { 
         id: 'Hesh', 
         name: "Hesh", 
         fullName: "David \"Hesh\" Walker",
         text: "抓到你了！别太感动，这个位置是专门为你准备的!圣诞快乐!", 
-        audio: "Hesh.mp3",
-        icon: "fa-user-secret" 
+        audio: "Hesh.mp3"
     },
     { 
         id: 'konig', 
         name: "König", 
         fullName: "König",
         text: "哈哈，圣诞快乐。对了，以防你不知道，树顶最高那颗大星星是我挂上去的！", 
-        audio: "konig.mp3",
-        icon: "fa-mask" 
+        audio: "konig.mp3"
     }
 ];
 
-// 挂饰类型
+// 挂饰类型 (星星、雪花、球)
 const ornamentTypes = [
     { icon: 'fa-star', color: '#FFD700' }, // 金星
     { icon: 'fa-star', color: '#ffffff' }, // 白星
@@ -128,9 +115,12 @@ window.addEventListener('load', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 雪花
+    // 雪花 (性能优化版)
     function createSnowflakes() {
-        const snowCount = 60;
+        // 手机端减少雪花数量
+        const isMobile = window.innerWidth < 768;
+        const snowCount = isMobile ? 25 : 60; 
+
         for (let i = 0; i < snowCount; i++) {
             const snow = document.createElement('div');
             snow.className = 'snowflake';
@@ -144,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createSnowflakes();
 
-    // 启动逻辑
     const overlay = document.getElementById('start-overlay');
     const bgm = document.getElementById('bgm');
     const startBtn = document.getElementById('start-btn');
@@ -200,14 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
             charVoice.play().catch(()=>{});
         }
         
-        // 调用打字机 (200ms)
+        // 打字机速度 200ms
         typeWriter(modalText, char.text, 200, () => {});
 
         const closeHandler = () => {
             viewModal.style.display = 'none';
             if(charVoice) charVoice.pause();
-            
-            // 关键修复3：关闭弹窗时，必须清除正在进行的打字机
             if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
             
             flyStarToTree(bubbleElement, char);
@@ -254,9 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.appendChild(ornament);
     }
 
-    // ============================================
-    // 关键修复2：位置算法大升级 (加宽 + 随机)
-    // ============================================
     function getSafePosition(isRole, seed) {
         let maxAttempts = 50; 
         let safeDistance = 6; 
@@ -266,25 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let r1 = seededRandom(currentSeed);
             let r2 = seededRandom(currentSeed + 1);
             
-            // Y轴范围：12% (顶) - 68% (底)
             let y = r1 * 56 + 12; 
-            
-            // 修复点1：角色大星星不再死板地聚在最顶端
-            // 允许它们分布在 12% - 55% 的中上区域，增加随机性
             if(isRole) y = r1 * 43 + 12; 
 
-            // 修复点2：大幅增加宽度 (User asked for +1/3 width)
-            // 原系数是 0.8，现在增加到 1.4，让三角形更“胖”
-            // 这样星星就能挂到左右更远的树梢上
             let spread = (y - 5) * 1.4; 
-            
-            // 限制最大宽度，别飞出屏幕 (保持在 95% 容器宽度内)
             if(spread > 95) spread = 95;
 
-            // 计算 X 轴
             let x = 50 + (r2 - 0.5) * spread;
 
-            // 碰撞检测
             let collision = false;
             for (let p of occupiedPositions) {
                 let dist = Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2));
@@ -293,16 +266,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!collision) return { x, y };
         }
         
-        // 兜底
         let finalY = seededRandom(seed+9) * 40 + 20;
         return { x: 50, y: finalY };
     }
 
-    // ============================================
-    // 关键修复3：稳健的打字机函数
-    // ============================================
     function typeWriter(element, text, speed, callback) {
-        // 1. 开始前，先强制清除上一次的计时器
         if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
         
         let i = 0; 
@@ -312,10 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (i < text.length) {
                 if(element) element.innerHTML += text.charAt(i); 
                 i++;
-                // 2. 将新的计时器ID赋值给全局变量
                 currentTypewriterTimer = setTimeout(type, speed);
             } else if (callback) {
-                // 结束时清除变量
                 currentTypewriterTimer = null;
                 callback();
             }
@@ -416,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = (e) => {
            e.target.closest('.modal').style.display = 'none';
            if(charVoice) charVoice.pause();
-           // 关闭普通弹窗也清理打字机（预防万一）
            if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
         }
     });
