@@ -385,4 +385,42 @@ document.addEventListener('DOMContentLoaded', () => {
            if(currentTypewriterTimer) clearTimeout(currentTypewriterTimer);
         }
     });
+
+    // ============================================
+     // 6. 访客统计修正 (双重扣除：PV 和 UV)
+    // ============================================
+    // ⚠️ 这里需要填两个数字：
+    const OFFSET_PV = 500;  // 扣除测试产生的 点击量 (PV)
+    const OFFSET_UV = 10;   // 扣除测试产生的 人数 (UV)
+    
+    const START_DATE = "2023-12-24"; // 你的开始日期
+
+    const dateSpan = document.getElementById('start-date');
+    if(dateSpan) dateSpan.innerText = START_DATE;
+
+    const fixCountInterval = setInterval(() => {
+        const pvEle = document.getElementById('busuanzi_value_site_pv');
+        const uvEle = document.getElementById('busuanzi_value_site_uv');
+        const container = document.getElementById('visit-count');
+        
+        // 只有当 PV 和 UV 都加载出来后，才进行计算和显示
+        if (pvEle && uvEle && pvEle.innerText !== '' && uvEle.innerText !== '') {
+            
+            // 1. 计算 PV
+            let totalPV = parseInt(pvEle.innerText);
+            let finalPV = totalPV - OFFSET_PV;
+            pvEle.innerText = finalPV < 0 ? 0 : finalPV;
+
+            // 2. 计算 UV
+            let totalUV = parseInt(uvEle.innerText);
+            let finalUV = totalUV - OFFSET_UV;
+            uvEle.innerText = finalUV < 0 ? 0 : finalUV;
+            
+            // 显示容器
+            container.style.display = 'block'; 
+            
+            clearInterval(fixCountInterval);
+        }
+    }, 100);
+    
 });
