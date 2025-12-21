@@ -72,7 +72,7 @@ const characters = [
         name: "Hesh", 
         fullName: "David \"Hesh\" Walker",
         text: "抓到你了！别太感动，这个位置是专门为你准备的!圣诞快乐!", 
-        audio: "Hesh.mp3"
+        audio: "hesh.mp3"
     },
     { 
         id: 'konig', 
@@ -424,3 +424,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
     
 });
+
