@@ -43,35 +43,35 @@ const characters = [
         id: 'krueger', 
         name: "Krueger", 
         fullName: "Sebastian Josef Krueger",
-        text: "你跑到哪去了？我有一个很好的节日计划，今天让我们好好庆祝，ok？圣诞快乐。", 
+        text: "你跑到哪去了？我有一个很棒的节日计划，让我们开始庆祝吧，圣诞快乐。", 
         audio: "krueger.mp3"
     },
      { 
         id: 'Soap', 
         name: "Soap", 
         fullName: "John \"Soap\" MacTavish",
-        text: "圣诞快乐，我很开心你来参加今天的庆典。对了，你打算许什么愿望呢？", 
+        text: "圣诞快乐，我很开心你来参加今天的派对。对了，你打算许什么愿望呢？", 
         audio: "soap.mp3"
     },
      { 
         id: 'Price', 
         name: "Price", 
         fullName: "Captain John Price",
-        text: "嘿，我们的优秀士兵来了，圣诞快乐!新的一年也请继续支持我们。", 
+        text: "嘿，我们的士兵来了，圣诞快乐!新的一年也要继续支援我们哦。", 
         audio: "price.mp3"
     },
     { 
         id: 'Riley', 
         name: "Riley", 
         fullName: "Riley",
-        text: "汪汪汪！汪汪汪汪汪！汪汪！！~", 
+        text: "汪汪~~~汪！~~~~唔汪！！~~~~~", 
         audio: "riley.mp3"
     },
      { 
         id: 'Hesh', 
         name: "Hesh", 
         fullName: "David \"Hesh\" Walker",
-        text: "抓到你了！别太感动，这个位置是专门为你准备的!圣诞快乐!", 
+        text: "抓到你了！别谢谢我之类的，这个位置是专门为你留的。圣诞快乐!", 
         audio: "hesh.mp3"
     },
     { 
@@ -424,4 +424,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
     
 });
+
 
