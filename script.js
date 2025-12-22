@@ -390,8 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
      // 6. 访客统计修正 (双重扣除：PV 和 UV)
     // ============================================
     // ⚠️ 这里需要填两个数字：
-    const OFFSET_PV = 500;  // 扣除测试产生的 点击量 (PV)
-    const OFFSET_UV = 10;   // 扣除测试产生的 人数 (UV)
+    const OFFSET_PV = 0;  // 扣除测试产生的 点击量 (PV)
+    const OFFSET_UV = 0;   // 扣除测试产生的 人数 (UV)
     
     const START_DATE = "2023-12-24"; // 你的开始日期
 
@@ -424,5 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
     
 });
+
 
 
