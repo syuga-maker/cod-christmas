@@ -397,8 +397,8 @@ const counter = document.getElementById('wish-counter');
      // 访客统计修正 (双重扣除：PV 和 UV)
     // ============================================
     // 这里填数字：
-    const OFFSET_PV = 285;  // 扣除测试产生的 点击量 (PV)
-    const OFFSET_UV = 187;   // 扣除测试产生的 人数 (UV)
+    const OFFSET_PV = 291;  // 扣除测试产生的 点击量 (PV)
+    const OFFSET_UV = 193;   // 扣除测试产生的 人数 (UV)
     
     const START_DATE = "2025-12-24"; // 开始日期
 
@@ -431,6 +431,7 @@ const counter = document.getElementById('wish-counter');
     }, 100);
     
 });
+
 
 
 
