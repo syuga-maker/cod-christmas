@@ -387,13 +387,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-     // 6. 访客统计修正 (双重扣除：PV 和 UV)
+     // 访客统计修正 (双重扣除：PV 和 UV)
     // ============================================
-    // ⚠️ 这里需要填两个数字：
-    const OFFSET_PV = 0;  // 扣除测试产生的 点击量 (PV)
-    const OFFSET_UV = 0;   // 扣除测试产生的 人数 (UV)
+    // 这里填数字：
+    const OFFSET_PV = 285;  // 扣除测试产生的 点击量 (PV)
+    const OFFSET_UV = 187;   // 扣除测试产生的 人数 (UV)
     
-    const START_DATE = "2023-12-24"; // 你的开始日期
+    const START_DATE = "2025-12-24"; // 开始日期
 
     const dateSpan = document.getElementById('start-date');
     if(dateSpan) dateSpan.innerText = START_DATE;
@@ -424,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
     
 });
+
 
 
 
