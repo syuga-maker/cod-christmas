@@ -164,7 +164,7 @@ body {
 
 .card-header-simple { padding: 30px 20px 10px; }
 
-/* 优化：只对英文花体生效，中文回退到默认字体 */
+/* 英文花体生效，中文默认字体 */
 .fancy-name {
     font-family: 'Great Vibes', cursive;
     font-size: 2.2rem; 
@@ -219,10 +219,10 @@ textarea { resize: none; height: 80px; }
 /* --- 统计数字样式 --- */
 #wish-counter {
     text-align: left;      
-    font-size: 0.9rem;
-    color: #333;           
+    font-size: 0.8rem;
+    color: #999;           
     margin-bottom: 10px;
-    font-weight: bold;
+    
     opacity: 0.8;
     padding-left: 5px;     
     width: 100%;           
@@ -263,7 +263,7 @@ textarea { resize: none; height: 80px; }
 #custom-toast.show { opacity: 1; visibility: visible; top: 15%; }
 
 /* ========================================================= */
-/* ⚡️ 手机端性能优化 ⚡️ (屏幕 < 768px) */
+/* 手机端性能优化  (屏幕 < 768px) */
 /* ========================================================= */
 @media (max-width: 768px) {
     /* 1. 禁用卡顿的毛玻璃 */
@@ -277,7 +277,7 @@ textarea { resize: none; height: 80px; }
         background: linear-gradient(135deg, rgba(225, 245, 254, 0.98) 0%, rgba(179, 229, 252, 0.95) 100%);
     }
     .char-bubble {
-        background: rgba(255, 255, 255, 0.5); /* 更不透明一点 */
+        background: rgba(255, 255, 255, 0.5); 
     }
 
     /* 3. 简化光影效果 */
@@ -288,5 +288,6 @@ textarea { resize: none; height: 80px; }
         filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
     }
 }
+
 
 
