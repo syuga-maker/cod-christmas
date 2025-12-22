@@ -218,12 +218,14 @@ textarea { resize: none; height: 80px; }
 
 /* --- 统计数字样式 --- */
 #wish-counter {
-    text-align: center;
+    text-align: left;      
     font-size: 0.9rem;
-    color: #0288d1; /* 深蓝色 */
-    margin-bottom: 10px; /* 和下面的列表拉开距离 */
+    color: #333;           
+    margin-bottom: 10px;
     font-weight: bold;
     opacity: 0.8;
+    padding-left: 5px;     
+    width: 100%;           
 }
 
 .list-style .close-btn { background: #eee; color: #555; }
@@ -286,4 +288,5 @@ textarea { resize: none; height: 80px; }
         filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
     }
 }
+
 
