@@ -363,6 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(topStar) {
         topStar.addEventListener('click', () => {
             const list = document.getElementById('wishes-list'); 
+          
+const counter = document.getElementById('wish-counter'); 
+          
             if(list) {
                 list.innerHTML = '';
                 characters.forEach(c => {
@@ -373,6 +376,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const li = document.createElement('li');
                     li.innerHTML = `<strong>✨ ${u.name}</strong>: ${u.text}`; list.appendChild(li);
                 });
+
+                 if(counter) {
+                    counter.innerText = `已收集心愿: ${allUserWishes.length}`;
+                }
                 document.getElementById('all-wishes-modal').style.display = 'flex';
             }
         });
@@ -424,6 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
     
 });
+
 
 
 
