@@ -88,9 +88,10 @@
         <div class="modal-content input-style">
             <span class="close-btn">&times;</span>
             <h3>✨ 留下你的心愿 ✨</h3>
+             <p>明年再来许愿吧！</p>
             <input type="text" id="user-name" placeholder="你的名字/代号" maxlength="15">
             <textarea id="user-wish" placeholder="写下美好的愿望..." maxlength="50"></textarea>
-            <button id="submit-wish">挂上树梢</button>
+           <!--   <button id="submit-wish">挂上树梢</button>   -->
         </div>
     </div>
 
@@ -100,32 +101,30 @@
             <span class="close-btn">&times;</span>
             <h3>✨ 圣诞许愿树 ✨</h3>
              <p id="wish-counter">已收集心愿: 0</p>
-            <div class="list-container">
+			
+<div class="list-container">
                 <ul id="wishes-list"></ul>
                 <!-- 作者署名 -->
-                <div class="list-footer">
-                    设计 & 创作 by 又老又脆弱
-<!-- 不蒜子 -->
- </div>
-<div id="visit-count" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.6; display: none; text-align: center;">
+                <div class="list-footer">设计 & 创作 by 又老又脆弱</div>
+				<!-- 不蒜子 -->
+	 <!--
+ <div id="visit-count" style="margin-top: 8px; font-size: 0.7rem; opacity: 0.6; display: none; text-align: center;">
    
-     <!-- UV (访客数) -->
     <span>总访客数 <span id="busuanzi_value_site_uv"></span></span>
 
-    <!-- PV (总访问量) -->
+    
     <span style="margin-right: 8px;">总访问量 <span id="busuanzi_value_site_pv"></span></span>
+</div>  
     
-   
-</div>
-    
-    <!-- 引入不蒜子脚本 (核心) -->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-</div>
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>  -->
+</div> 
 
                 </div>
             </div>
-        </div>
-    </div>
+  
+	
+	
 
     <audio id="bgm" loop>
         <source src="bg_music.mp3" type="audio/mpeg">
@@ -135,6 +134,7 @@
     <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
